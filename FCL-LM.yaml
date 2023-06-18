@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-application
+  template:
+    metadata:
+      labels:
+        app: my-application
+    spec:
+      containers:
+        - name: interaction-api
+          image: ghcr.io/fcl-lm/gnam-api:main
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "20"
+              memory: 30Gi
+            requests:
+              cpu: "16"
+              memory: 15Gi
+        - name: gnam-api
+          image: ghcr.io/fcl-lm/privateGPT:main
+          ports:
+            - containerPort: 8081
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
