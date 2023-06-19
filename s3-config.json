@@ -4,8 +4,8 @@
             "name": "me",
             "credentials": [
                 {
-                "accessKey": "any",
-                "secretKey": "anylongkey"
+                "accessKey": "adminadmin",
+                "secretKey": "adminadmin"
                 }
             ],
             "actions": [
