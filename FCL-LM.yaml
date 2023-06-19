@@ -1,37 +1,285 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-application
+  name: elastic
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-application
+      app: elastic
   template:
     metadata:
       labels:
-        app: my-application
+        app: elastic
     spec:
       containers:
-        - name: interaction-api
-          image: ghcr.io/fcl-lm/gnam-api:main
+        - name: elastic
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+          ports:
+            - containerPort: 9200
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "0.5"
+              memory: 2Gi
+          volumeMounts:
+            - name: elastic-data
+              mountPath: /usr/share/elasticsearch/data
+          env:
+            - name: xpack.security.transport.ssl.enabled
+              value: "false"
+            - name: discovery.type
+              value: single-node
+            - name: ELASTIC_PASSWORD
+              value: adminadmin
+      volumes:
+        - name: elastic-data
+          emptyDir: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seaweedfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seaweedfs
+  template:
+    metadata:
+      labels:
+        app: seaweedfs
+    spec:
+      containers:
+        - name: master
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 9333
+            - containerPort: 19333
+            - containerPort: 9324
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "0.5"
+              memory: 2Gi
+          command: ["master", "-ip=master", "-ip.bind=0.0.0.0"]
+          volumeMounts:
+            - name: seaweed-master-data
+              mountPath: /data
+        - name: volume
+          image: chrislusf/seaweedfs
           ports:
             - containerPort: 8080
+            - containerPort: 18080
+            - containerPort: 9325
           resources:
             limits:
-              cpu: "20"
-              memory: 30Gi
+              cpu: "2"
+              memory: 4Gi
             requests:
-              cpu: "16"
-              memory: 15Gi
-        - name: gnam-api
-          image: ghcr.io/fcl-lm/privateGPT:main
+              cpu: "0.5"
+              memory: 2Gi
+          command: ["volume", "-mserver=master:9333", "-ip.bind=0.0.0.0", "-port=8080", "-dir=/data"]
+          volumeMounts:
+            - name: seaweed-volume-data
+              mountPath: /data
+        - name: filer
+          image: chrislusf/seaweedfs
           ports:
-            - containerPort: 8081
+            - containerPort: 8888
+            - containerPort: 18888
+            - containerPort: 9326
           resources:
             limits:
-              cpu: "4"
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          command: ["filer", "-master=master:9333", "-ip.bind=0.0.0.0"]
+          tty: true
+          stdin: true
+          volumeMounts:
+            - name: seaweed-filer-data
+              mountPath: /data
+        - name: s3
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 8333
+          resources:
+            limits:
+              cpu: "2"
               memory: 4Gi
             requests:
               cpu: "1"
               memory: 2Gi
+          command: ["s3", "-filer=filer:8888", "-ip.bind=0.0.0.0", "-config=/config/config.json"]
+          volumeMounts:
+            - name: seaweed-s3-data
+              mountPath: /data
+            - name: s3-config
+              mountPath: /config
+      volumes:
+        - name: seaweed-master-data
+          emptyDir: {}
+        - name: seaweed-volume-data
+          emptyDir: {}
+        - name: seaweed-filer-data
+          emptyDir: {}
+        - name: seaweed-s3-data
+          emptyDir: {}
+        - name: s3-config
+          configMap:
+            name: s3-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gnam-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gnam-api
+  template:
+    metadata:
+      labels:
+        app: gnam-api
+    spec:
+      containers:
+        - name: gnam-api
+          image: ghcr.io/fcl-lm/gnam-api:main
+          ports:
+            - containerPort: 9090
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          env:
+            - name: S3_ENDPOINT
+              value: http://s3:8333
+            - name: AWS_ACCESS_KEY_ID
+              value: adminadmin
+            - name: AWS_SECRET_ACCESS_KEY
+              value: adminadmin
+          volumeMounts:
+            - name: source-document
+              mountPath: /data
+      volumes:
+        - name: source-document
+          emptyDir: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: privategpt
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: privategpt
+  template:
+    metadata:
+      labels:
+        app: privategpt
+    spec:
+      containers:
+        - name: privategpt
+          image: ghcr.io/fcl-lm/privategpt:main
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: "11"
+              memory: 20Gi
+            requests:
+              cpu: "10"
+              memory: 15Gi
+          env:
+            - name: S3_ENDPOINT
+              value: "http://s3:8333"
+            - name: S3_ACCESS_KEY
+              value: "adminadmin"
+            - name: S3_SECRET_KEY
+              value: "adminadmin"
+            - name: ELASTIC_ENDPOINT
+              value: "http://elastic:adminadmin@elastic:9200"
+            - name: ELASTIC_INDEX
+              value: test_index
+            - name: MODEL_TYPE
+              value: GPT4All
+            - name: MODEL_NAME
+              value: ggml-gpt4all-j-v1.3-groovy.bin
+            - name: EMBEDDINGS_MODEL_NAME
+              value: all-MiniLM-L6-v2
+            - name: MODEL_N_CTX
+              value: "10000"
+            - name: MODEL_N_BATCH
+              value: "8"
+            - name: TARGET_SOURCE_CHUNKS
+              value: "4"
+          volumeMounts:
+            - name: privategpt-tmp
+              mountPath: /tmp
+            - name: privategpt-models
+              mountPath: /privategpt/models
+      volumes:
+        - name: privategpt-tmp
+          emptyDir: {}
+        - name: privategpt-models
+          emptyDir: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vector-store-updater
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vector-store-updater
+  template:
+    metadata:
+      labels:
+        app: vector-store-updater
+    spec:
+      containers:
+        - name: vector-store-updater
+          image: ghcr.io/fcl-lm/vector-store-updater:main
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "0.5"
+              memory: 2Gi
+          env:
+            - name: ELASTIC_ENDPOINT
+              value: http://elastic:adminadmin@127.0.0.1:9200
+            - name: ELASTIC_INDEX
+              value: test_index
+            - name: EMBEDDINGS_MODEL_NAME
+              value: all-MiniLM-L6-v2
+            - name: S3_ENDPOINT
+              value: "http://s3:8333"
+            - name: S3_ACCESS_KEY
+              value: "adminadmin"
+            - name: S3_SECRET_KEY
+              value: "adminadmin"
+          volumeMounts:
+            - name: vector-store-updater-data
+              mountPath: /root/ntlk_data
+      volumes:
+        - name: vector-store-updater-data
+          emptyDir: {}
