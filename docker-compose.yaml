@@ -56,7 +56,7 @@ services:
       - filer
     volumes:
       - seaweed-s3:/data
-      - /srv/docker/seaweedfs/config/s3-config.json:/config/config.json
+      - ./s3-config.json:/config/config.json
   # ingestion API
   gnam-api:
       image: ghcr.io/fcl-lm/gnam-api:main
