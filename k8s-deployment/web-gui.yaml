@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-gui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-gui
+  template:
+    metadata:
+      labels:
+        app: web-gui
+    spec:
+      containers:
+        - name: web-gui
+          image: ghcr.io/fcl-lm/fcl-svelte-webgui:main
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          env:
+            - name: PUBLIC_FLASK_ENDPOINT
+              value: http://privategpt-loadbalancer-service:5000   #using the loadbalancer service
+          volumeMounts:
+            - name: source-document
+              mountPath: /data
+      volumes:
+        - name: source-document
+          emptyDir: {}
