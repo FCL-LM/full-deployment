@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elastic
+  template:
+    metadata:
+      labels:
+        app: elastic
+    spec:
+      containers:
+        - name: elastic
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+          ports:
+            - containerPort: 9200
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "0.5"
+              memory: 2Gi
+          volumeMounts:
+            - name: elastic-data
+              mountPath: /usr/share/elasticsearch/data
+          env:
+            - name: xpack.security.transport.ssl.enabled
+              value: "false"
+            - name: discovery.type
+              value: single-node
+            - name: ELASTIC_PASSWORD
+              value: adminadmin
+      volumes:
+        - name: elastic-data
+          emptyDir: {}
