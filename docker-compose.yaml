@@ -15,7 +15,6 @@ services:
   gnam-api:
     restart: always
     image: ghcr.io/fcl-lm/gnam-api:main
-    # build: .
     container_name: gnam-api
     ports:
       - "9090:9090"
@@ -77,7 +76,9 @@ services:
       - ./s3-config.json:/config/config.json
   # interaction API
   privategpt:
-    image: ghcr.io/fcl-lm/privategpt:main
+    #image: ghcr.io/fcl-lm/privategpt:main
+    restart: always
+    build: ./privateGPT
     ports:
       - 5000:5000
     environment:
@@ -107,13 +108,18 @@ services:
         S3_SECRET_KEY: "adminadmin"
     volumes:
       - vector-store-updater:/root/ntlk_data
-  # web-gui:
-  #   image: ghcr.io/fcl-lm/FCL-svelte-webgui:main
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   environment:
-  #     S3_ENDPOINT: "http://s3:8333"
+  # web gui
+  web-gui:
+    image: ghcr.io/fcl-lm/fcl-svelte-webgui:main
+    ports:
+      - 80:80
+      - 443:443
+      - 3000:3000
+    depends_on:
+      - privategpt
+    environment:
+      PUBLIC_FLASK_ENDPOINT: http://privategpt:5000
+      S3_ENDPOINT: "http://s3:8333"
 
 
 volumes:
