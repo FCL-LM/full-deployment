@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: privategpt
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: privategpt
+  template:
+    metadata:
+      labels:
+        app: privategpt
+    spec:
+      containers:
+        - name: privategpt
+          image: ghcr.io/fcl-lm/privategpt:main
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: "11"
+              memory: 20Gi
+            requests:
+              cpu: "10"
+              memory: 15Gi
+          env:
+            - name: S3_ENDPOINT
+              value: "http://s3:8333"
+            - name: S3_ACCESS_KEY
+              value: "adminadmin"
+            - name: S3_SECRET_KEY
+              value: "adminadmin"
+            - name: ELASTIC_ENDPOINT
+              value: "http://elastic:adminadmin@elastic:9200"
+            - name: ELASTIC_INDEX
+              value: test_index
+            - name: MODEL_TYPE
+              value: GPT4All
+            - name: MODEL_NAME
+              value: ggml-gpt4all-j-v1.3-groovy.bin
+            - name: EMBEDDINGS_MODEL_NAME
+              value: all-MiniLM-L6-v2
+            - name: MODEL_N_CTX
+              value: "10000"
+            - name: MODEL_N_BATCH
+              value: "8"
+            - name: TARGET_SOURCE_CHUNKS
+              value: "4"
+          volumeMounts:
+            - name: privategpt-tmp
+              mountPath: /tmp
+            - name: privategpt-models
+              mountPath: /privategpt/models
+      volumes:
+        - name: privategpt-tmp
+          emptyDir: {}
+        - name: privategpt-models
+          emptyDir: {}
