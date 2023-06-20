@@ -12,6 +12,11 @@ spec:
       labels:
         app: gnam-api
     spec:
+      #init container to wait for s3 to be ready (IP and DNS resolution)
+      initContainers:
+        - name: wait-for-s3
+          image: busybox
+          command: ['sh', '-c', 'until nslookup s3; do echo waiting for s3; sleep 2; done;']
       containers:
         - name: gnam-api
           image: ghcr.io/fcl-lm/gnam-api:main

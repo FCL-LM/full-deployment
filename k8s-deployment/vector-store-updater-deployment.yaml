@@ -12,6 +12,14 @@ spec:
       labels:
         app: vector-store-updater
     spec:
+      initContainers:
+        # wait for elastic and s3 to be ready
+        - name: wait-for-elastic
+          image: busybox
+          command: ['sh', '-c', 'until wget -qO- http://elastic:9200; do echo waiting for elastic; sleep 2; done;']
+        - name: wait-for-s3
+          image: busybox
+          command: ['sh', '-c', 'until wget -qO- http://s3:8333; do echo waiting for s3; sleep 2; done;']
       containers:
         - name: vector-store-updater
           image: ghcr.io/fcl-lm/vector-store-updater:main

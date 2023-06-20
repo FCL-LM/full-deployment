@@ -7,6 +7,6 @@ spec:
     app: privategpt
   ports:
     - protocol: TCP
-      port: 80   #port exposed by the service
+      port: 5000   #port exposed by the service
       targetPort: 5000  #port exposed by the pods, directs traffic to this port of the pods
   type: LoadBalancer
