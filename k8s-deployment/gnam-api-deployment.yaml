@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gnam-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gnam-api
+  template:
+    metadata:
+      labels:
+        app: gnam-api
+    spec:
+      containers:
+        - name: gnam-api
+          image: ghcr.io/fcl-lm/gnam-api:main
+          ports:
+            - containerPort: 9090
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          env:
+            - name: S3_ENDPOINT
+              value: http://s3:8333
+            - name: AWS_ACCESS_KEY_ID
+              value: adminadmin
+            - name: AWS_SECRET_ACCESS_KEY
+              value: adminadmin
+          volumeMounts:
+            - name: source-document
+              mountPath: /data
+      volumes:
+        - name: source-document
+          emptyDir: {}
