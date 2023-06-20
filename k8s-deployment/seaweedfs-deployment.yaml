@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seaweedfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seaweedfs
+  template:
+    metadata:
+      labels:
+        app: seaweedfs
+    spec:
+      containers:
+        - name: master
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 9333
+            - containerPort: 19333
+            - containerPort: 9324
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "0.5"
+              memory: 2Gi
+          command: ["master", "-ip=master", "-ip.bind=0.0.0.0"]
+          volumeMounts:
+            - name: seaweed-master-data
+              mountPath: /data
+        - name: volume
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 8080
+            - containerPort: 18080
+            - containerPort: 9325
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "0.5"
+              memory: 2Gi
+          command: ["volume", "-mserver=master:9333", "-ip.bind=0.0.0.0", "-port=8080", "-dir=/data"]
+          volumeMounts:
+            - name: seaweed-volume-data
+              mountPath: /data
+        - name: filer
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 8888
+            - containerPort: 18888
+            - containerPort: 9326
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          command: ["filer", "-master=master:9333", "-ip.bind=0.0.0.0"]
+          tty: true
+          stdin: true
+          volumeMounts:
+            - name: seaweed-filer-data
+              mountPath: /data
+        - name: s3
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 8333
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          command: ["s3", "-filer=filer:8888", "-ip.bind=0.0.0.0", "-config=/config/config.json"]
+          volumeMounts:
+            - name: seaweed-s3-data
+              mountPath: /data
+            - name: s3-config
+              mountPath: /config
+      volumes:
+        - name: seaweed-master-data
+          emptyDir: {}
+        - name: seaweed-volume-data
+          emptyDir: {}
+        - name: seaweed-filer-data
+          emptyDir: {}
+        - name: seaweed-s3-data
+          emptyDir: {}
+        - name: s3-config
+          configMap:
+            name: s3-config
