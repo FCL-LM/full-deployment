@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: seaweedfs
 spec:
-  replicas: 1
+  # replicas: 1
   selector:
     matchLabels:
       app: seaweedfs
@@ -22,11 +22,11 @@ spec:
           resources:
             limits:
               cpu: "2"
-              memory: 4Gi
+              memory: 10Gi
             requests:
               cpu: "0.5"
               memory: 2Gi
-          command: ["master", "-ip=master", "-ip.bind=0.0.0.0"]
+          command: ["/usr/bin/weed" ,"master", "-ip=master", "-ip.bind=0.0.0.0"]
           volumeMounts:
             - name: seaweed-master-data
               mountPath: /data
@@ -43,7 +43,7 @@ spec:
             requests:
               cpu: "0.5"
               memory: 2Gi
-          command: ["volume", "-mserver=master:9333", "-ip.bind=0.0.0.0", "-port=8080", "-dir=/data"]
+          command: ["/usr/bin/weed" ,"volume", "-mserver=master:9333", "-ip.bind=0.0.0.0", "-port=8080", "-dir=/data"]
           volumeMounts:
             - name: seaweed-volume-data
               mountPath: /data
@@ -60,7 +60,7 @@ spec:
             requests:
               cpu: "1"
               memory: 1Gi
-          command: ["filer", "-master=master:9333", "-ip.bind=0.0.0.0"]
+          command: ["/usr/bin/weed" ,"filer", "-master=master:9333", "-ip.bind=0.0.0.0"]
           tty: true
           stdin: true
           volumeMounts:
@@ -77,7 +77,7 @@ spec:
             requests:
               cpu: "1"
               memory: 2Gi
-          command: ["s3", "-filer=filer:8888", "-ip.bind=0.0.0.0", "-config=/config/config.json"]
+          command: ["/usr/bin/weed" ,"s3", "-filer=filer:8888", "-ip.bind=0.0.0.0", "-config=/config/config.json"]
           volumeMounts:
             - name: seaweed-s3-data
               mountPath: /data
