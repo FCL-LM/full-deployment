@@ -76,9 +76,9 @@ services:
       - ./s3-config.json:/config/config.json
   # interaction API
   privategpt:
-    #image: ghcr.io/fcl-lm/privategpt:main
     restart: always
-    build: ./privateGPT
+    image: ghcr.io/fcl-lm/privategpt:main
+    # build: ./privateGPT
     ports:
       - 5000:5000
     environment:
@@ -118,8 +118,7 @@ services:
     depends_on:
       - privategpt
     environment:
-      PUBLIC_FLASK_ENDPOINT: http://privategpt:5000
-      S3_ENDPOINT: "http://s3:8333"
+      PUBLIC_FLASK_ENDPOINT: http://localhost:5000
 
 
 volumes:
