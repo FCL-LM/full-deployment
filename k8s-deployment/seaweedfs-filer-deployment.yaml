@@ -15,6 +15,7 @@ spec:
       containers:
         - name: filer
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
             - containerPort: 18888

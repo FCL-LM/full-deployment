@@ -15,6 +15,7 @@ spec:
       containers:
         - name: volume
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
             - containerPort: 18080

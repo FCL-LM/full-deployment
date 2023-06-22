@@ -15,6 +15,7 @@ spec:
       containers:
         - name: master
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9333
             - containerPort: 19333
@@ -32,6 +33,7 @@ spec:
               mountPath: /data
         - name: volume
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
             - containerPort: 18080
@@ -49,6 +51,7 @@ spec:
               mountPath: /data
         - name: filer
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
             - containerPort: 18888
@@ -68,6 +71,7 @@ spec:
               mountPath: /data
         - name: s3
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8333
           resources:

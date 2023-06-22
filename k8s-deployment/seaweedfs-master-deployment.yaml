@@ -15,6 +15,7 @@ spec:
       containers:
         - name: master
           image: chrislusf/seaweedfs
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9333
             - containerPort: 19333
