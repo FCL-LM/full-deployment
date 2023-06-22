@@ -12,6 +12,12 @@ spec:
       labels:
         app: web-gui
     spec:
+      initContainers:
+        # wait for flask to be ready (with the load balancer service)
+        - name: wait-for-flask
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', 'until nslookup privategpt-loadbalancer-service; do echo waiting for flask; sleep 2; done;']
       containers:
         - name: web-gui
           image: ghcr.io/fcl-lm/fcl-svelte-webgui:main
@@ -26,7 +32,7 @@ spec:
               memory: 2Gi
           env:
             - name: PUBLIC_FLASK_ENDPOINT
-              value: http://privategpt-loadbalancer-service:5000   #using the loadbalancer service
+              value: http://privategpt-loadbalancer-service:5000   #using the loadbalancer service, also the loadbalancer service IP should be public
           volumeMounts:
             - name: source-document
               mountPath: /data

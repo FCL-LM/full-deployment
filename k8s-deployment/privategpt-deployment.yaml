@@ -19,13 +19,15 @@ spec:
         #   command: ['sh', '-c', 'until wget -qO- http://elastic:9200; do echo waiting for elastic; sleep 2; done;']
         - name: wait-for-elastic
           image: busybox
-          command: ['sh', '-c', "until nslookup elastic-search; do echo waiting for elastic-search; sleep 2; done"]      
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', "until nslookup elastic-search.default.svc.cluster.local; do echo waiting for elastic-search; sleep 2; done"]      
         # - name: wait-for-s3
         #   image: busybox
         #   command: ['sh', '-c', 'until wget -qO- http://s3:8333; do echo waiting for s3; sleep 2; done;']
         - name: wait-for-s3
           image: busybox
-          command: ['sh', '-c', "until nslookup seaweedfs-s3; do echo waiting for s3-service; sleep 2; done"]      
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', "until nslookup seaweedfs-s3.default.svc.cluster.local; do echo waiting for s3-service; sleep 2; done"]      
         
       containers:
         - name: privategpt
