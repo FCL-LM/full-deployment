@@ -16,7 +16,7 @@ spec:
       initContainers:
         - name: wait-for-s3
           image: busybox
-          command: ['sh', '-c', 'until nslookup s3; do echo waiting for s3; sleep 2; done;']
+          command: ['sh', '-c', 'until nslookup seaweedfs-s3; do echo waiting for s3; sleep 2; done;']
       containers:
         - name: gnam-api
           image: ghcr.io/fcl-lm/gnam-api:main
@@ -31,7 +31,7 @@ spec:
               memory: 2Gi
           env:
             - name: S3_ENDPOINT
-              value: http://s3:8333
+              value: http://seaweedfs-s3:8333
             - name: AWS_ACCESS_KEY_ID
               value: adminadmin
             - name: AWS_SECRET_ACCESS_KEY

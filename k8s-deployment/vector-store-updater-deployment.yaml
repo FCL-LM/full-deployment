@@ -16,10 +16,10 @@ spec:
         # wait for elastic and s3 to be ready
         - name: wait-for-elastic
           image: busybox
-          command: ['sh', '-c', 'until wget -qO- http://elastic:9200; do echo waiting for elastic; sleep 2; done;']
+          command: ['sh', '-c', 'until wget -qO- http://elastic-search:9200; do echo waiting for elastic; sleep 2; done;']
         - name: wait-for-s3
           image: busybox
-          command: ['sh', '-c', 'until wget -qO- http://s3:8333; do echo waiting for s3; sleep 2; done;']
+          command: ['sh', '-c', 'until wget -qO- http://seaweedfs-s3:8333; do echo waiting for s3; sleep 2; done;']
       containers:
         - name: vector-store-updater
           image: ghcr.io/fcl-lm/vector-store-updater:main
@@ -32,13 +32,13 @@ spec:
               memory: 2Gi
           env:
             - name: ELASTIC_ENDPOINT
-              value: http://elastic:adminadmin@127.0.0.1:9200
+              value: http://elastic:adminadmin@elastic-search:9200
             - name: ELASTIC_INDEX
               value: test_index
             - name: EMBEDDINGS_MODEL_NAME
               value: all-MiniLM-L6-v2
             - name: S3_ENDPOINT
-              value: "http://s3:8333"
+              value: "http://seaweedfs-s3:8333"
             - name: S3_ACCESS_KEY
               value: "adminadmin"
             - name: S3_SECRET_KEY
