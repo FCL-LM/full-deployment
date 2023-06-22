@@ -90,9 +90,14 @@ spec:
   selector:
     app: gnam-api
   ports:
-    - protocol: TCP
+    - name: gnam-api-port
+      protocol: TCP
       port: 9090
       targetPort: 9090
+    - name: seaweedfs-s3-port
+      protocol: TCP
+      port: 8333
+      targetPort: 8333
 ---
 apiVersion: v1
 kind: Service
@@ -102,7 +107,8 @@ spec:
   selector:
     app: elastic-search
   ports:
-    - protocol: TCP
+    - name: elastic-search-port
+      protocol: TCP
       port: 9200
       targetPort: 9200
 ---
@@ -114,9 +120,18 @@ spec:
   selector:
     app: privategpt
   ports:
-    - protocol: TCP
+    - name: privategpt-port
+      protocol: TCP
       port: 5000
       targetPort: 5000
+    - name: elastic-search-port
+      protocol: TCP
+      port: 9200
+      targetPort: 9200
+    - name: seaweedfs-s3-port
+      protocol: TCP
+      port: 8333
+      targetPort: 8333
 ---
 apiVersion: v1
 kind: Service
@@ -126,9 +141,18 @@ spec:
   selector:
     app: vector-store-updater
   ports:
-    - protocol: TCP
+    - name: vector-store-updater-port
+      protocol: TCP
       port: 8081  # TODO define port if needed, 8081 is just a placeholder
       targetPort: 8081
+    - name: seaweedfs-s3-port
+      protocol: TCP
+      port: 8333
+      targetPort: 8333
+    - name: elastic-search-port
+      protocol: TCP
+      port: 9200
+      targetPort: 9200
 ---
 apiVersion: v1
 kind: Service
@@ -138,6 +162,11 @@ spec:
   selector:
     app: web-gui
   ports:
-    - protocol: TCP
+    - name: web-gui-port
+      protocol: TCP
       port: 3000
       targetPort: 3000
+    - name: privategpt-port
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
