@@ -110,7 +110,7 @@ services:
       - vector-store-updater:/root/ntlk_data
   # web gui
   web-gui:
-    image: ghcr.io/fcl-lm/fcl-svelte-webgui:main
+    image: ghcr.io/fcl-lm/fcl-gui:main
     ports:
       - 80:80
       - 443:443
