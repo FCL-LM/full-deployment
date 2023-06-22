@@ -18,6 +18,7 @@ spec:
           ports:
             - containerPort: 8080
             - containerPort: 18080
+            - containerPort: 19333
             - containerPort: 9325
           resources:
             limits:
