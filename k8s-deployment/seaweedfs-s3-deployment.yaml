@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: s3
+  template:
+    metadata:
+      labels:
+        app: s3
+    spec:
+      containers:
+        - name: s3
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 8333
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          command: ["/usr/bin/weed" ,"s3", "-filer=seaweedfs-filer:8888", "-ip.bind=0.0.0.0", "-config=/config/config.json"]
+          volumeMounts:
+            - name: seaweed-s3-data
+              mountPath: /data
+            - name: s3-config
+              mountPath: /config
+      volumes:
+        - name: seaweed-s3-data
+          emptyDir: {}
+        - name: s3-config
+          configMap:
+            name: s3-config

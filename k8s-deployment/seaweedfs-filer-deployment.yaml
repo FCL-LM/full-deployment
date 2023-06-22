@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filer
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: filer
+  template:
+    metadata:
+      labels:
+        app: filer
+    spec:
+      containers:
+        - name: filer
+          image: chrislusf/seaweedfs
+          ports:
+            - containerPort: 8888
+            - containerPort: 18888
+            - containerPort: 9326
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          command: ["/usr/bin/weed" ,"filer", "-master=seaweedfs-master:9333", "-ip.bind=0.0.0.0"]
+          tty: true
+          stdin: true
+          volumeMounts:
+            - name: seaweed-filer-data
+              mountPath: /data
+      volumes:
+        - name: seaweed-filer-data
+          emptyDir: {}

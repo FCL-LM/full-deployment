@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs-master
+spec:
+  selector:
+    app: master
+  ports:
+    - name: seaweedfs-master-port
+      protocol: TCP
+      port: 9333
+      targetPort: 9333 
+    - name: seaweedfs-master-port2
+      protocol: TCP
+      port: 19333
+      targetPort: 19333
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs-volume
+spec:
+  selector:
+    app: volume
+  ports:
+    - name: seaweedfs-volume-port
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: seaweedfs-master-port
+      protocol: TCP
+      port: 9333
+      targetPort: 9333
+    - name: seaweedfs-master-port2
+      protocol: TCP
+      port: 19333
+      targetPort: 19333
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs-filer
+spec:
+  selector:
+    app: filer
+  ports:
+    - name: seaweedfs-filer-port
+      protocol: TCP
+      port: 8888
+      targetPort: 8888
+    - name: seaweedfs-filer-port2
+      protocol: TCP
+      port: 18888
+      targetPort: 18888
+    - name: seaweedfs-master-port
+      protocol: TCP
+      port: 9333
+      targetPort: 9333
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs-s3
+spec:
+  selector:
+    app: s3
+  ports:
+    - name: seaweedfs-s3-port
+      protocol: TCP
+      port: 8333
+      targetPort: 8333
+    - name: seaweedfs-master-port
+      protocol: TCP
+      port: 9333
+      targetPort: 9333
+    - name: seaweedfs-filer-port
+      protocol: TCP
+      port: 8888
+      targetPort: 8888
+    - name: seaweedfs-filer-port2
+      protocol: TCP
+      port: 18888
+      targetPort: 18888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gnam-api
+spec:
+  selector:
+    app: gnam-api
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elastic-search
+spec:
+  selector:
+    app: elastic-search
+  ports:
+    - protocol: TCP
+      port: 9200
+      targetPort: 9200
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: privategpt
+spec:
+  selector:
+    app: privategpt
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vector-store-updater
+spec:
+  selector:
+    app: vector-store-updater
+  ports:
+    - protocol: TCP
+      port: 8081  # TODO define port if needed, 8081 is just a placeholder
+      targetPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-gui
+spec:
+  selector:
+    app: web-gui
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
