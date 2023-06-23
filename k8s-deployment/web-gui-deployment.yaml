@@ -17,7 +17,7 @@ spec:
         - name: wait-for-flask
           image: busybox
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', 'until nslookup privategpt-loadbalancer-service; do echo waiting for flask; sleep 2; done;']
+          command: ['sh', '-c', 'until nslookup privategpt-loadbalancer-service.default.svc.cluster.local; do echo waiting for flask; sleep 2; done;']
       containers:
         - name: web-gui
           image: ghcr.io/fcl-lm/fcl-svelte-webgui:main
