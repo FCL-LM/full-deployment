@@ -35,4 +35,5 @@ spec:
               mountPath: /data
       volumes:
         - name: seaweed-filer-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: seaweedfs-filer-persistent

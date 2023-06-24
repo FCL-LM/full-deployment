@@ -27,11 +27,12 @@ spec:
             requests:
               cpu: "0.5"
               memory: 2Gi
-          command: ["/usr/bin/weed" , "master", "-ip=seaweedfs-master", "-ip.bind=0.0.0.0"]
+          command: ["/usr/bin/weed" , "master", "-ip=seaweedfs-master", "-ip.bind=0.0.0.0", "-mdir=/data"]
           volumeMounts:
             - name: seaweed-master-data
               mountPath: /data
 
       volumes:
         - name: seaweed-master-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: seaweedfs-master-persistent
