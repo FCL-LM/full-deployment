@@ -106,10 +106,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: elastic-search
+  name: elastic
 spec:
   selector:
-    app: elastic-search
+    app: elastic
   ports:
     - name: elastic-search-port
       protocol: TCP

@@ -12,6 +12,13 @@ spec:
       labels:
         app: elastic
     spec:
+      initContainers:
+        - name: sysctl
+          image: busybox
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
       containers:
         - name: elastic
           image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
@@ -21,15 +28,15 @@ spec:
           resources:
             limits:
               cpu: "2"
-              memory: 4Gi
+              memory: 10Gi
             requests:
-              cpu: "0.5"
-              memory: 2Gi
+              cpu: "1"
+              memory: 5Gi
           volumeMounts:
             - name: elastic-data
               mountPath: /usr/share/elasticsearch/data
           env:
-            - name: xpack.security.transport.ssl.enabled
+            - name: xpack.security.enabled
               value: "false"
             - name: discovery.type
               value: single-node
@@ -37,4 +44,5 @@ spec:
               value: adminadmin
       volumes:
         - name: elastic-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: elastic-search-persistent

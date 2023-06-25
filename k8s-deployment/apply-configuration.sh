@@ -6,6 +6,7 @@ kubectl apply -f seaweedfs-volume-persistentvolumeclaim.yaml
 kubectl apply -f seaweedfs-filer-persistentvolumeclaim.yaml
 kubectl apply -f seaweedfs-master-persistentvolumeclaim.yaml
 kubectl apply -f gnam-api-persistentvolumeclaim.yaml
+kubectl apply -f elastic-search-persistentvolumeclaim.yaml
 
 # deployments
 kubectl apply -f elastic-deployment.yaml
@@ -16,7 +17,7 @@ kubectl apply -f seaweedfs-filer-deployment.yaml
 kubectl apply -f seaweedfs-s3-deployment.yaml
 
 kubectl apply -f gnam-api-deployment.yaml
-#kubectl apply -f privategpt-deployment.yaml
+kubectl apply -f privategpt-deployment.yaml
 #kubectl apply -f vector-store-updater-deployment.yaml
 #kubectl apply -f web-gui-deployment.yaml
 
