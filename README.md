@@ -39,10 +39,18 @@ Control if the models were loaded with
 ```bash
 mc ls /path/to/local/modelfile.bin seaweedfs/models/model.bin
 ```
+
+remember to always have at least one file ingested with gnam-api since the application will not work otherwise.
+```bash 
+curl -i -F file=@/path/to/file http://localhost:9090/gnam
+```
+
 ### Third step
 ```bash
 docker compose up privategpt vector-store-updater web-gui
 ```
+
+To connect to the application go to http://localhost:3000
 
 ## Deploy in kubernetes
 To deploy to kubernetes, the requirements are a k8s cluster where to deploy the application and _kubectl_ working and connected to the cluster.
