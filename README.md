@@ -54,11 +54,32 @@ chmod +x apply-configuration.sh
 ./apply-configuration.sh
 ```
 
+### configure seaweedfs with minio client
+Done as in [Second step](Second step)
+### copy models to seaweedfs with minio client
+```bash
+mc cp /path/to/model seaweedfs/models/
+```
+
+```bash
+mc cp /path/to/source seaweedfs/sources/
+```
+TODO automization
+
+Deploy the rest of the apps with
+```bash
+chmod +x apply-private-and-gnam.sh 
+./apply-private-and-gnam.sh
+```
+
 To get the public IP for the load balancer use
 ```bash
 kubectl describe service privategpt-loadbalancer-service
 ```
-
+or with minikube
+```bash
+minikube service privategpt-loadbalancer-service --url
+```
 Take the Load Balancer IP and substitute it in the web-gui-deployment.yaml file in the environment variable PUBLIC_FLASK_ENDPOINT. And redeploy only the web-gui with
 ```bash 
 kubectl apply -f web-gui-deployment.yaml
