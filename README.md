@@ -54,4 +54,24 @@ chmod +x apply-configuration.sh
 ./apply-configuration.sh
 ```
 
-TODO expose the services
+To get the public IP for the load balancer use
+```bash
+kubectl describe service privategpt-loadbalancer-service
+```
+
+Take the Load Balancer IP and substitute it in the web-gui-deployment.yaml file in the environment variable PUBLIC_FLASK_ENDPOINT. And redeploy only the web-gui with
+```bash 
+kubectl apply -f web-gui-deployment.yaml
+```
+
+ or the whole application with the previous command (only the modified deployment will be redeployed)
+```bash 
+./apply-configuration.sh
+```
+
+Then go to the web-gui IP (get it with *kubectl*) at the port 30000 and ask what you want to ask.
+
+If you want to add more source documents remember to ingest the documents with:
+```bash 
+curl -i -F file=@/path/to/file http://<gnam-apiIP>:30090/gnam
+```
