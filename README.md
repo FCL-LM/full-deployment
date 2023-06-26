@@ -54,8 +54,8 @@ chmod +x apply-configuration.sh
 ./apply-configuration.sh
 ```
 
-### configure seaweedfs with minio client
-Done as in [Second step](Second step)
+### Configure seaweedfs with minio client
+Done as in [Second step](https://github.com/FCL-LM/full-deployment/edit/main/README.md#second-step)
 ### copy models to seaweedfs with minio client
 ```bash
 mc cp /path/to/model seaweedfs/models/
