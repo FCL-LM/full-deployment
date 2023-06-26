@@ -25,6 +25,7 @@ spec:
       containers:
         - name: vector-store-updater
           image: ghcr.io/fcl-lm/vector-store-updater:main
+          imagePullPolicy: Always
           resources:
             limits:
               cpu: "2"

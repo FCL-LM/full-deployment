@@ -33,7 +33,7 @@ spec:
               memory: 2Gi
           env:
             - name: PUBLIC_FLASK_ENDPOINT
-              value: http://192.168.67.2:31864
+              value: http://192.168.67.2:32382
               #value: http://privategpt-loadbalancer-service:5000   #using the loadbalancer service, also the loadbalancer service IP should be public
           volumeMounts:
             - name: source-document

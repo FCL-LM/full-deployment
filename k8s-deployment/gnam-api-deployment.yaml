@@ -21,6 +21,7 @@ spec:
       containers:
         - name: gnam-api
           image: ghcr.io/fcl-lm/gnam-api:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 9090
           resources:
