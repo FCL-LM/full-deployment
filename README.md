@@ -10,7 +10,7 @@ Since the direct dependency on the models loaded into the seaweedfs of the priva
 ### First step
 First run the services that do not depend directly on the data loaded in the seaweedfs to get them up and working
 ```bash
-docker compose up gnam-api elastic master volume filer s3 
+docker-compose up gnam-api elastic master volume filer s3 
 ```
 
 check the health of the gnam-api after everything has finished the initialization:
