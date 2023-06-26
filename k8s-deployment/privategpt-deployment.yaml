@@ -27,7 +27,13 @@ spec:
         - name: wait-for-s3
           image: busybox
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', "until nslookup seaweedfs-s3.default.svc.cluster.local; do echo waiting for s3-service; sleep 2; done"]      
+          command: ['sh', '-c', "until nslookup seaweedfs-s3.default.svc.cluster.local; do echo waiting for s3-service; sleep 2; done"] 
+        - name: sysctl
+          image: busybox
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']     
         
       containers:
         - name: privategpt
@@ -39,10 +45,10 @@ spec:
             - containerPort: 5000
           resources:
             limits:
-              cpu: "11"
-              memory: 15Gi
+              cpu: "8"
+              memory: 18Gi
             requests:
-              cpu: "10"
+              cpu: "6"
               memory: 10Gi
           env:
             - name: S3_ENDPOINT

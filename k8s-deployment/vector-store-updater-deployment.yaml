@@ -17,7 +17,7 @@ spec:
         - name: wait-for-elastic
           image: busybox
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', 'until nslookup elastic-search.default.svc.cluster.local; do echo waiting for elastic; sleep 2; done;']
+          command: ['sh', '-c', 'until nslookup elastic.default.svc.cluster.local; do echo waiting for elastic; sleep 2; done;']
         - name: wait-for-s3
           image: busybox
           imagePullPolicy: IfNotPresent
@@ -34,7 +34,7 @@ spec:
               memory: 2Gi
           env:
             - name: ELASTIC_ENDPOINT
-              value: http://elastic:adminadmin@elastic-search:9200
+              value: http://elastic:adminadmin@elastic:9200
             - name: ELASTIC_INDEX
               value: test_index
             - name: EMBEDDINGS_MODEL_NAME
