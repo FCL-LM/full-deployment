@@ -72,7 +72,7 @@ mc cp /path/to/model seaweedfs/models/
 ```bash
 mc cp /path/to/source seaweedfs/sources/
 ```
-TODO automization
+Always remember that at least one source document should be in seaweedfs under the sources bucket, since the model will not work otherwise
 
 Deploy the rest of the apps with
 ```bash
