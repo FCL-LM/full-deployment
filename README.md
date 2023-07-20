@@ -3,7 +3,7 @@ Full deployment of the FCL-LM project to see if it works (locally for now)
 
 Following, we show the scheme of the final cloud architecture of the project:
 
-![image](cloud_architecture.png)
+![image](docs/cloud_architecture.png)
 ## Steps for the deploy in local with docker compose
 Since the direct dependency on the models loaded into the seaweedfs of the privateGPT container, the process of getting up the application is divided in three steps
 
@@ -72,7 +72,7 @@ mc cp /path/to/model seaweedfs/models/
 ```bash
 mc cp /path/to/source seaweedfs/sources/
 ```
-TODO automization
+Always remember that at least one source document should be in seaweedfs under the sources bucket, since the model will not work otherwise
 
 Deploy the rest of the apps with
 ```bash
