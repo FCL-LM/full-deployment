@@ -78,7 +78,7 @@ services:
   privategpt:
     restart: always
     image: ghcr.io/fcl-lm/privategpt:main
-    # build: ./privateGPT
+    #build: ./privateGPT
     ports:
       - 5000:5000
     environment:
